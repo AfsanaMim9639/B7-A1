@@ -1,20 +1,18 @@
-# Pick and Omit — your interface's best friends
+# `Pick` and `Omit` — Keep Your Interfaces DRY
 
-> One big interface. Many different uses. No copy-pasting required.
+## Introduction
 
----
+One of the most common mistakes in large TypeScript projects is copying the same interface over and over — tweaking it slightly for each use case. A separate one for the login form, another for the profile card, yet another for the admin view. This approach is called code duplication, and it is a slow poison.
 
-## The problem
-
-Imagine you have a `User` interface for your whole app. But your login form only needs email and password. Your profile card only shows name and avatar. Your admin panel needs everything except the password.
-
-The bad move? Write a new interface for each. The DRY move? `Pick` and `Omit`.
+`Pick` and `Omit` are two TypeScript utility types that solve this problem completely. You start with one master interface and carve out exactly the slices you need — no copy-pasting, no manual syncing, no silent bugs.
 
 ---
 
-## The master interface
+## Body
 
-Start with one source of truth — a single interface that holds all the fields.
+### The master interface — single source of truth
+
+Everything starts with one complete interface that holds all the fields your domain needs.
 
 ```ts
 interface User {
@@ -32,9 +30,9 @@ interface User {
 
 ---
 
-## Pick — grab only what you need
+### `Pick` — grab only what you need
 
-`Pick<T, Keys>` creates a new type with only the fields you list. Think of it as saying "give me just these."
+`Pick<T, Keys>` creates a new type using only the fields you list. Think of it as saying "give me just these."
 
 ```ts
 // Bad — manual duplicate interface
@@ -57,9 +55,9 @@ type LoginForm = Pick<User, "email" | "password">;
 
 ---
 
-## Omit — drop what you don't want
+### `Omit` — drop what you do not want
 
-`Omit<T, Keys>` is the opposite — it gives you everything except the fields you exclude. Think "give me all of it, minus these."
+`Omit<T, Keys>` does the opposite — it gives you everything except the fields you exclude. Think of it as "give me all of it, minus these."
 
 ```ts
 // Bad — rewriting almost the whole thing
@@ -86,10 +84,10 @@ type PublicUser = Omit<User, "password">;
 
 ---
 
-## Real world — one master, many slices
+### Real world — one master, many slices
 
 ```ts
-type LoginForm  = Pick<User, "email" | "password">;
+type LoginForm   = Pick<User, "email" | "password">;
 type ProfileCard = Pick<User, "name" | "avatar" | "role">;
 type PublicUser  = Omit<User, "password">;
 type AdminView   = Omit<User, "avatar">;
@@ -98,8 +96,14 @@ type AdminView   = Omit<User, "avatar">;
 // Change User once — everything stays in sync.
 ```
 
-> **The DRY payoff:** your master interface is the single source of truth. `Pick` and `Omit` are lenses — they let you look at exactly the slice you need, without ever copy-pasting a single field.
+> **The DRY payoff:** Your master interface is the single source of truth. `Pick` and `Omit` are lenses — they let you look at exactly the slice you need, without ever copy-pasting a single field.
 
 ---
 
+## Conclusion
+
+Duplicate interfaces mean duplicate bugs. Every time something changes in `User`, you have to manually update every copy — and missing even one creates a silent bug that is hard to track down.
+
 **Duplicate interfaces are tech debt in disguise. One master interface plus `Pick` and `Omit` is all you need to keep things clean, consistent, and easy to change.**
+
+Following the DRY principle in TypeScript is not difficult — you just need to know the right utility types.
